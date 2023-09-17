@@ -1,0 +1,76 @@
+import tkinter as tk
+import math
+
+# Function to update the input field
+def calculate(event):
+    current = input_field.get()
+    text = event.widget.cget("text")
+
+    if text == "=":
+        try:
+            result = eval(current)
+            input_field.delete(0, tk.END)
+            input_field.insert(tk.END, str(result))
+        except Exception as e:
+            input_field.delete(0, tk.END)
+            input_field.insert(tk.END, "Error")
+    elif text == "C":
+        input_field.delete(0, tk.END)
+    elif text == "√":
+        if current:
+            try:
+                result = math.sqrt(float(current))
+                input_field.delete(0, tk.END)
+                input_field.insert(tk.END, str(result))
+            except ValueError:
+                input_field.delete(0, tk.END)
+                input_field.insert(tk.END, "Error")
+    elif text == "%":
+        if current:
+            input_field.delete(0, tk.END)
+            input_field.insert(tk.END, str(float(current) / 100))
+    elif text == "^":
+        input_field.insert(tk.END, "**")
+    elif text == "CE":
+        current = current[:-1]
+        input_field.delete(0, tk.END)
+        input_field.insert(tk.END, current)
+    else:
+        input_field.insert(tk.END, text)
+
+# Create a tkinter window
+root = tk.Tk()
+root.title("My Calculator")
+
+# Create an input field with a smaller font size
+input_field = tk.Entry(root, font="lucida 15 bold")
+input_field.grid(row=0, column=0, columnspan=4, padx=10, pady=10, ipadx=8, sticky="ew")
+
+# Create buttons for the calculator with smaller sizes
+button_frame = tk.Frame(root)
+button_frame.grid(row=1, column=0, columnspan=4, padx=10, pady=10)
+
+buttons = [
+    "7", "8", "9", "+",
+    "4", "5", "6", "-",
+    "1", "2", "3", "*",
+    "C", "0", "=", "/",
+    "√", "%", "^", "CE"  # Square Root, Percentage, Exponentiation, Clear Entry
+]
+
+row, col = 1, 0
+for button_text in buttons:
+    button = tk.Button(button_frame, text=button_text, font="lucida 12 bold", padx=10, pady=10, width=4, height=1)
+    button.grid(row=row, column=col, padx=3, pady=3)
+    button.bind("<Button-1>", calculate)
+    col += 1
+    if col > 3:
+        col = 0
+        row += 1
+
+# Configure row and column weights to maintain button size consistency
+for i in range(4):
+    root.grid_columnconfigure(i, weight=1)
+    button_frame.grid_rowconfigure(i, weight=1)
+    
+root.mainloop()
